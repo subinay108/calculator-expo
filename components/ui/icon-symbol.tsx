@@ -1,14 +1,15 @@
 import {
-  Copy,
-  Delete,
-  Divide,
-  Equal,
-  History,
-  Minus,
-  Plus,
-  Share2,
-  Trash2,
-  X
+    Copy,
+    Delete,
+    Divide,
+    Equal,
+    History,
+    Minus,
+    MoreHorizontal,
+    Plus,
+    Share2,
+    Trash2,
+    X
 } from 'lucide-react-native';
 import React from 'react';
 import { type TextStyle } from 'react-native';
@@ -16,6 +17,7 @@ import { type TextStyle } from 'react-native';
 const MAPPING: Record<string, React.ComponentType<any>> = {
   'doc.on.doc': Copy,
   'square.and.arrow.up': Share2,
+  more: MoreHorizontal,
   trash: Trash2,
   history: History,
   divide: Divide,

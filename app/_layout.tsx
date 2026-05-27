@@ -10,7 +10,7 @@ export default function RootLayout() {
   return (
     <SafeAreaView style={styles.root}>
       <Slot />
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
     </SafeAreaView>
   );
 }

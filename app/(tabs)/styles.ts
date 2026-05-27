@@ -21,10 +21,14 @@ export const styles = StyleSheet.create({
   equalsText: { fontSize: 22, fontWeight: '700', color: '#ede9e8' },
   equalsKey: { backgroundColor: '#ff4b00' },
   modalContainer: { flex: 1, padding: 20, paddingTop: 40 },
-  modalTitle: { fontSize: 18, fontWeight: '700', marginBottom: 12, color: '#53433f' },
+  modalTitle: { fontSize: 30, fontWeight: '700', marginBottom: 12, color: '#53433f' },
   historyItem: { paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#DDD' },
-  historyText: { color: '#53433f' },
+  historyText: { fontSize: 20, color: '#53433f' },
   modalActions: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 },
+  header: { position: 'absolute', top: 12, right: 12, zIndex: 20 },
+  headerButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', elevation: 2 },
+  headerButtonText: { fontSize: 18, color: '#53433f', fontWeight: '700' },
+  headerIcon: { opacity: 1 },
 });
 
 export default styles;

@@ -1,9 +1,12 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
 import { Alert, FlatList, Modal, PanResponder, Pressable, ScrollView, Share, Text, View } from 'react-native';
 import { evaluateExpression } from '../../lib/evaluateExpression';
 import { styles } from './styles';
 
 import * as Clipboard from 'expo-clipboard';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 
 type HistoryItem = { expr: string; result: string };
@@ -11,10 +14,12 @@ type HistoryItem = { expr: string; result: string };
 // evaluateExpression moved to lib/evaluateExpression.ts
 
 export default function CalculatorScreen() {
+  const router = useRouter();
   const [expr, setExpr] = useState('');
   const [display, setDisplay] = useState('0');
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const HISTORY_KEY = 'calculator_history_v1';
 
   const panResponder = React.useMemo(
     () =>
@@ -171,6 +176,37 @@ export default function CalculatorScreen() {
     setDisplay(out);
   }, [expr]);
 
+  // load history from storage once
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(HISTORY_KEY);
+        if (!mounted) return;
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) setHistory(parsed as HistoryItem[]);
+        }
+      } catch (e) {
+        // ignore load errors
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // persist history when it changes
+  React.useEffect(() => {
+    (async () => {
+      try {
+        await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(history || []));
+      } catch (e) {
+        // ignore save errors
+      }
+    })();
+  }, [history]);
+
   async function copyResult() {
     await Clipboard.setStringAsync(display);
     Alert.alert('Copied', display);
@@ -207,6 +243,15 @@ export default function CalculatorScreen() {
 
   return (
     <View style={styles.container} {...panResponder.panHandlers}>
+      <View style={styles.header}>
+        <Pressable
+          style={styles.headerButton}
+          onPress={() => router.push('/others')}
+          android_ripple={{ color: 'rgba(0,0,0,0.06)' }}
+          accessibilityLabel="More calculators">
+          <IconSymbol name="more" size={20} color="#53433f" style={styles.headerIcon} />
+        </Pressable>
+      </View>
       <View style={styles.displayContainer}>
         <ScrollView
           ref={(r) => { exprRef.current = r; }}
@@ -276,7 +321,7 @@ export default function CalculatorScreen() {
       </View>
 
       <Modal visible={showHistory} animationType="slide" onRequestClose={() => setShowHistory(false)}>
-        <View style={styles.modalContainer}>
+        <SafeAreaView style={styles.modalContainer}>
           <Text style={styles.modalTitle}>History</Text>
           <FlatList
             data={history}
@@ -308,7 +353,7 @@ export default function CalculatorScreen() {
               <Text style={styles.actionLabel}>Close</Text>
             </Pressable>
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
     </View>
   );
